@@ -1,0 +1,396 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+        href="https://github.com/stackcss/sheetify#readme"
+
+    >sheetify (v6.0.1)</a>
+</h1>
+<h4>Modular CSS bundler</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.sheetify">module sheetify</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.sheetify.sheetify">
+            function <span class="apidocSignatureSpan"></span>sheetify
+            <span class="apidocSignatureSpan">(src, filename, options, done)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.sheetify.getPrefix">
+            function <span class="apidocSignatureSpan">sheetify.</span>getPrefix
+            <span class="apidocSignatureSpan">(css)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.sheetify.insert">
+            function <span class="apidocSignatureSpan">sheetify.</span>insert
+            <span class="apidocSignatureSpan">(css, options)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.sheetify.toString">
+            function <span class="apidocSignatureSpan">sheetify.</span>toString
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.sheetify.insert">module sheetify.insert</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.sheetify.insert.insert">
+            function <span class="apidocSignatureSpan">sheetify.</span>insert
+            <span class="apidocSignatureSpan">(css, options)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.sheetify.insert.insertCss">
+            function <span class="apidocSignatureSpan">sheetify.insert.</span>insertCss
+            <span class="apidocSignatureSpan">(css, options)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.sheetify" id="apidoc.module.sheetify">module sheetify</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.sheetify.sheetify" id="apidoc.element.sheetify.sheetify">
+        function <span class="apidocSignatureSpan"></span>sheetify
+        <span class="apidocSignatureSpan">(src, filename, options, done)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function sheetify(src, filename, options, done) {
+  // handle tagged template calls directly from Node
+  const isTemplate = Array.isArray(src)
+  if (isTemplate) src = src.join(&#x27;&#x27;)
+  assert.equal(typeof src, &#x27;string&#x27;, &#x27;src must be a string&#x27;)
+  src = src.trim()
+
+  // Ensure prefix is always correct when run from inside node
+  var css
+  if (!isTemplate &#x26;&#x26; (!filename || typeof filename === &#x27;object&#x27;)) {
+     // module or file name via tagged template call w or w/out options
+    const callerDirname = path.dirname(stackTrace.get()[1].getFileName())
+    const resolved = cssResolve(src, { basedir: callerDirname })
+    css = fs.readFileSync(resolved, &#x27;utf8&#x27;)
+  } else {
+    // it better be some css
+    css = src
+  }
+
+  const prefix = getPrefix(css)
+
+  // only parse if in a browserify transform
+  if (typeof filename === &#x27;string&#x27;) parseCss(src, filename, prefix, options, done)
+
+  return prefix
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.sheetify.getPrefix" id="apidoc.element.sheetify.getPrefix">
+        function <span class="apidocSignatureSpan">sheetify.</span>getPrefix
+        <span class="apidocSignatureSpan">(css)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function getPrefix(css) {
+  const prefix = &#x27;_&#x27; + crypto.createHash(&#x27;md5&#x27;)
+    .update(css.trim())
+    .digest(&#x27;hex&#x27;)
+    .slice(0, 8)
+  return prefix
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.sheetify.insert" id="apidoc.element.sheetify.insert">
+        function <span class="apidocSignatureSpan">sheetify.</span>insert
+        <span class="apidocSignatureSpan">(css, options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function insertCss(css, options) {
+    options = options || {};
+
+    if (css === undefined) {
+        throw new Error(usage);
+    }
+
+    var position = options.prepend === true ? &#x27;prepend&#x27; : &#x27;append&#x27;;
+    var container = options.container !== undefined ? options.container : document.querySelector(&#x27;head&#x27;);
+    var containerId = containers.indexOf(container);
+
+    // first time we see this container, create the necessary entries
+    if (containerId === -1) {
+        containerId = containers.push(container) - 1;
+        styleElements[containerId] = {};
+    }
+
+    // try to get the correponding container + position styleElement, create it otherwise
+    var styleElement;
+
+    if (styleElements[containerId] !== undefined &#x26;&#x26; styleElements[containerId][position] !== undefined) {
+        styleElement = styleElements[containerId][position];
+    } else {
+        styleElement = styleElements[containerId][position] = createStyleElement();
+
+        if (position === &#x27;prepend&#x27;) {
+            container.insertBefore(styleElement, container.childNodes[0]);
+        } else {
+            container.appendChild(styleElement);
+        }
+    }
+
+    // strip potential UTF-8 BOM if css was read from a file
+    if (css.charCodeAt(0) === 0xFEFF) { css = css.substr(1, css.length); }
+
+    // actually add the stylesheet
+    if (styleElement.styleSheet) {
+        styleElement.styleSheet.cssText += css
+    } else {
+        styleElement.textContent += css;
+    }
+
+    return styleElement;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.sheetify.toString" id="apidoc.element.sheetify.toString">
+        function <span class="apidocSignatureSpan">sheetify.</span>toString
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">toString = function () {
+    return text;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+applyTransforms(filename, String(src), xtend(options), function (err, css) {
+  if (err) return done(err)
+  var p = postcss()
+  p = p.use(cssPrefix(&#x27;.&#x27; + prefix))
+
+  try {
+    css = p.process(css).<span class="apidocCodeKeywordSpan">toString</span>()
+
+    return done(null, css, prefix)
+  } catch (e) {
+    return done(e)
+  }
+})
+...</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.sheetify.insert" id="apidoc.module.sheetify.insert">module sheetify.insert</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.sheetify.insert.insert" id="apidoc.element.sheetify.insert.insert">
+        function <span class="apidocSignatureSpan">sheetify.</span>insert
+        <span class="apidocSignatureSpan">(css, options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function insertCss(css, options) {
+    options = options || {};
+
+    if (css === undefined) {
+        throw new Error(usage);
+    }
+
+    var position = options.prepend === true ? &#x27;prepend&#x27; : &#x27;append&#x27;;
+    var container = options.container !== undefined ? options.container : document.querySelector(&#x27;head&#x27;);
+    var containerId = containers.indexOf(container);
+
+    // first time we see this container, create the necessary entries
+    if (containerId === -1) {
+        containerId = containers.push(container) - 1;
+        styleElements[containerId] = {};
+    }
+
+    // try to get the correponding container + position styleElement, create it otherwise
+    var styleElement;
+
+    if (styleElements[containerId] !== undefined &#x26;&#x26; styleElements[containerId][position] !== undefined) {
+        styleElement = styleElements[containerId][position];
+    } else {
+        styleElement = styleElements[containerId][position] = createStyleElement();
+
+        if (position === &#x27;prepend&#x27;) {
+            container.insertBefore(styleElement, container.childNodes[0]);
+        } else {
+            container.appendChild(styleElement);
+        }
+    }
+
+    // strip potential UTF-8 BOM if css was read from a file
+    if (css.charCodeAt(0) === 0xFEFF) { css = css.substr(1, css.length); }
+
+    // actually add the stylesheet
+    if (styleElement.styleSheet) {
+        styleElement.styleSheet.cssText += css
+    } else {
+        styleElement.textContent += css;
+    }
+
+    return styleElement;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.sheetify.insert.insertCss" id="apidoc.element.sheetify.insert.insertCss">
+        function <span class="apidocSignatureSpan">sheetify.insert.</span>insertCss
+        <span class="apidocSignatureSpan">(css, options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function insertCss(css, options) {
+    options = options || {};
+
+    if (css === undefined) {
+        throw new Error(usage);
+    }
+
+    var position = options.prepend === true ? &#x27;prepend&#x27; : &#x27;append&#x27;;
+    var container = options.container !== undefined ? options.container : document.querySelector(&#x27;head&#x27;);
+    var containerId = containers.indexOf(container);
+
+    // first time we see this container, create the necessary entries
+    if (containerId === -1) {
+        containerId = containers.push(container) - 1;
+        styleElements[containerId] = {};
+    }
+
+    // try to get the correponding container + position styleElement, create it otherwise
+    var styleElement;
+
+    if (styleElements[containerId] !== undefined &#x26;&#x26; styleElements[containerId][position] !== undefined) {
+        styleElement = styleElements[containerId][position];
+    } else {
+        styleElement = styleElements[containerId][position] = createStyleElement();
+
+        if (position === &#x27;prepend&#x27;) {
+            container.insertBefore(styleElement, container.childNodes[0]);
+        } else {
+            container.appendChild(styleElement);
+        }
+    }
+
+    // strip potential UTF-8 BOM if css was read from a file
+    if (css.charCodeAt(0) === 0xFEFF) { css = css.substr(1, css.length); }
+
+    // actually add the stylesheet
+    if (styleElement.styleSheet) {
+        styleElement.styleSheet.cssText += css
+    } else {
+        styleElement.textContent += css;
+    }
+
+    return styleElement;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
