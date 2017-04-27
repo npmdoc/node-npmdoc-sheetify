@@ -51,7 +51,7 @@
 
         href="https://github.com/stackcss/sheetify#readme"
 
-    >sheetify (v6.0.1)</a>
+    >sheetify (v6.0.2)</a>
 </h1>
 <h4>Modular CSS bundler</h4>
 <div class="apidocSectionDiv"><a
@@ -81,6 +81,15 @@
 
         <li>
 
+            <a class="apidocElementLiA" href="#apidoc.element.sheetify.index">
+            function <span class="apidocSignatureSpan">sheetify.</span>index
+            <span class="apidocSignatureSpan">(src, filename, options, done)</span>
+            </a>
+
+        </li>
+
+        <li>
+
             <a class="apidocElementLiA" href="#apidoc.element.sheetify.insert">
             function <span class="apidocSignatureSpan">sheetify.</span>insert
             <span class="apidocSignatureSpan">(css, options)</span>
@@ -88,11 +97,24 @@
 
         </li>
 
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.sheetify.index">module sheetify.index</a><ol>
+
         <li>
 
-            <a class="apidocElementLiA" href="#apidoc.element.sheetify.toString">
-            function <span class="apidocSignatureSpan">sheetify.</span>toString
-            <span class="apidocSignatureSpan">()</span>
+            <a class="apidocElementLiA" href="#apidoc.element.sheetify.index.index">
+            function <span class="apidocSignatureSpan">sheetify.</span>index
+            <span class="apidocSignatureSpan">(src, filename, options, done)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.sheetify.index.getPrefix">
+            function <span class="apidocSignatureSpan">sheetify.index.</span>getPrefix
+            <span class="apidocSignatureSpan">(css)</span>
             </a>
 
         </li>
@@ -179,6 +201,60 @@
     .slice(0, 8)
   return prefix
 }</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+const transform = require(&#x27;../transform&#x27;)
+const sheetify = require(&#x27;..&#x27;)
+
+test(&#x27;prefix&#x27;, function (t) {
+t.test(&#x27;should return a prefix when called in Node&#x27;, function (t) {
+  t.plan(1)
+  const prefix = sheetify`.foo { color: blue; }`
+  const expected = sheetify.<span class="apidocCodeKeywordSpan">getPrefix</span>(&#x27;.foo { color: blue; }&#x27;)
+  t.equal(prefix, expected, &#x27;prefix is equal&#x27;)
+})
+
+t.test(&#x27;should return a prefix with relative path in Node&#x27;, function (t) {
+  t.plan(1)
+  const expath = path.join(__dirname, &#x27;fixtures/prefix-import-source.css&#x27;)
+  const expected = sheetify.getPrefix(fs.readFileSync(expath, &#x27;utf8&#x27;))
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.sheetify.index" id="apidoc.element.sheetify.index">
+        function <span class="apidocSignatureSpan">sheetify.</span>index
+        <span class="apidocSignatureSpan">(src, filename, options, done)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function sheetify(src, filename, options, done) {
+  // handle tagged template calls directly from Node
+  const isTemplate = Array.isArray(src)
+  if (isTemplate) src = src.join(&#x27;&#x27;)
+  assert.equal(typeof src, &#x27;string&#x27;, &#x27;src must be a string&#x27;)
+  src = src.trim()
+
+  // Ensure prefix is always correct when run from inside node
+  var css
+  if (!isTemplate &#x26;&#x26; (!filename || typeof filename === &#x27;object&#x27;)) {
+     // module or file name via tagged template call w or w/out options
+    const callerDirname = path.dirname(stackTrace.get()[1].getFileName())
+    const resolved = cssResolve(src, { basedir: callerDirname })
+    css = fs.readFileSync(resolved, &#x27;utf8&#x27;)
+  } else {
+    // it better be some css
+    css = src
+  }
+
+  const prefix = getPrefix(css)
+
+  // only parse if in a browserify transform
+  if (typeof filename === &#x27;string&#x27;) parseCss(src, filename, prefix, options, done)
+
+  return prefix
+}</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
     </ul>
 
@@ -239,32 +315,80 @@
     </ul>
 
 
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.sheetify.index" id="apidoc.module.sheetify.index">module sheetify.index</a></h1>
+
 
     <h2>
-        <a href="#apidoc.element.sheetify.toString" id="apidoc.element.sheetify.toString">
-        function <span class="apidocSignatureSpan">sheetify.</span>toString
-        <span class="apidocSignatureSpan">()</span>
+        <a href="#apidoc.element.sheetify.index.index" id="apidoc.element.sheetify.index.index">
+        function <span class="apidocSignatureSpan">sheetify.</span>index
+        <span class="apidocSignatureSpan">(src, filename, options, done)</span>
         </a>
     </h2>
     <ul>
-    <li>description and source-code<pre class="apidocCodePre">toString = function () {
-    return text;
+    <li>description and source-code<pre class="apidocCodePre">function sheetify(src, filename, options, done) {
+  // handle tagged template calls directly from Node
+  const isTemplate = Array.isArray(src)
+  if (isTemplate) src = src.join(&#x27;&#x27;)
+  assert.equal(typeof src, &#x27;string&#x27;, &#x27;src must be a string&#x27;)
+  src = src.trim()
+
+  // Ensure prefix is always correct when run from inside node
+  var css
+  if (!isTemplate &#x26;&#x26; (!filename || typeof filename === &#x27;object&#x27;)) {
+     // module or file name via tagged template call w or w/out options
+    const callerDirname = path.dirname(stackTrace.get()[1].getFileName())
+    const resolved = cssResolve(src, { basedir: callerDirname })
+    css = fs.readFileSync(resolved, &#x27;utf8&#x27;)
+  } else {
+    // it better be some css
+    css = src
+  }
+
+  const prefix = getPrefix(css)
+
+  // only parse if in a browserify transform
+  if (typeof filename === &#x27;string&#x27;) parseCss(src, filename, prefix, options, done)
+
+  return prefix
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.sheetify.index.getPrefix" id="apidoc.element.sheetify.index.getPrefix">
+        function <span class="apidocSignatureSpan">sheetify.index.</span>getPrefix
+        <span class="apidocSignatureSpan">(css)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function getPrefix(css) {
+  const prefix = &#x27;_&#x27; + crypto.createHash(&#x27;md5&#x27;)
+    .update(css.trim())
+    .digest(&#x27;hex&#x27;)
+    .slice(0, 8)
+  return prefix
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+const transform = require(&#x27;../transform&#x27;)
+const sheetify = require(&#x27;..&#x27;)
 
-applyTransforms(filename, String(src), xtend(options), function (err, css) {
-  if (err) return done(err)
-  var p = postcss()
-  p = p.use(cssPrefix(&#x27;.&#x27; + prefix))
-
-  try {
-    css = p.process(css).<span class="apidocCodeKeywordSpan">toString</span>()
-
-    return done(null, css, prefix)
-  } catch (e) {
-    return done(e)
-  }
+test(&#x27;prefix&#x27;, function (t) {
+t.test(&#x27;should return a prefix when called in Node&#x27;, function (t) {
+  t.plan(1)
+  const prefix = sheetify`.foo { color: blue; }`
+  const expected = sheetify.<span class="apidocCodeKeywordSpan">getPrefix</span>(&#x27;.foo { color: blue; }&#x27;)
+  t.equal(prefix, expected, &#x27;prefix is equal&#x27;)
 })
+
+t.test(&#x27;should return a prefix with relative path in Node&#x27;, function (t) {
+  t.plan(1)
+  const expath = path.join(__dirname, &#x27;fixtures/prefix-import-source.css&#x27;)
+  const expected = sheetify.getPrefix(fs.readFileSync(expath, &#x27;utf8&#x27;))
 ...</pre></li>
     </ul>
 
