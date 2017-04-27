@@ -1,6 +1,6 @@
 # npmdoc-sheetify
 
-#### api documentation for  [sheetify (v6.0.1)](https://github.com/stackcss/sheetify#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-sheetify.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-sheetify) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-sheetify.svg)](https://travis-ci.org/npmdoc/node-npmdoc-sheetify)
+#### basic api documentation for  [sheetify (v6.0.2)](https://github.com/stackcss/sheetify#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-sheetify.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-sheetify) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-sheetify.svg)](https://travis-ci.org/npmdoc/node-npmdoc-sheetify)
 
 #### Modular CSS bundler
 
@@ -49,6 +49,7 @@
         "css-type-base": "^1.0.2",
         "css-wipe": "^4.2.2",
         "dependency-check": "^2.5.1",
+        "domify": "^1.4.0",
         "from2-string": "^1.1.0",
         "istanbul": "^0.4.5",
         "jsdom": "^9.4.2",
@@ -60,10 +61,10 @@
     },
     "directories": {},
     "dist": {
-        "shasum": "b11851aca2f0a149cbc97c7833bd599988d42da5",
-        "tarball": "https://registry.npmjs.org/sheetify/-/sheetify-6.0.1.tgz"
+        "shasum": "f494161e1cafc1bc02276e930e148acdd3344fd2",
+        "tarball": "https://registry.npmjs.org/sheetify/-/sheetify-6.0.2.tgz"
     },
-    "gitHead": "2d3e9ee67b3de938a8e6e728d304f3b8d413179c",
+    "gitHead": "124473f04496aa7063338ef2dc14575fd187ee4d",
     "homepage": "https://github.com/stackcss/sheetify#readme",
     "keywords": [
         "modular",
@@ -96,7 +97,8 @@
         "test": "standard && npm run deps && tape test/index.js",
         "test:cov": "standard && npm run deps && NODE_ENV=test istanbul cover test/index.js"
     },
-    "version": "6.0.1"
+    "version": "6.0.2",
+    "bin": {}
 }
 ```
 
